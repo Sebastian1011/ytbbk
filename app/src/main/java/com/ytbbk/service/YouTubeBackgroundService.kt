@@ -21,8 +21,10 @@ class YouTubeBackgroundService : Service() {
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val url = intent?.getStringExtra("url") ?: "YouTube"
-        startForeground(notificationId, createNotification(url))
+        val title = intent?.getStringExtra("url")?.let { url ->
+            if (url.contains("youtube.com")) "YouTube视频" else "视频"
+        } ?: "YouTube"
+        startForeground(notificationId, createNotification(title))
         return START_STICKY
     }
     
@@ -42,7 +44,7 @@ class YouTubeBackgroundService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
     
-    private fun createNotification(url: String): Notification {
+    private fun createNotification(title: String): Notification {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
@@ -54,7 +56,7 @@ class YouTubeBackgroundService : Service() {
         
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("YouTube后台播放")
-            .setContentText("正在后台播放YouTube视频")
+            .setContentText("正在后台播放: $title")
             .setSmallIcon(R.drawable.ic_play_arrow)
             .setContentIntent(pendingIntent)
             .setOngoing(true)

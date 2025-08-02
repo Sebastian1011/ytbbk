@@ -7,17 +7,16 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowWebView
 
-@RunWith(AndroidJUnit4::class)
-@Config(sdk = [28])
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [34])
 class MainActivityTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
         ShadowWebView.setWebContentsDebuggingEnabled(true)
     }
 
@@ -70,7 +69,8 @@ class MainActivityTest {
                 shadowWebView.pushEntryToHistory("https://m.youtube.com/watch?v=test")
                 
                 // 测试返回键处理
-                val result = activity.onKeyDown(android.view.KeyEvent.KEYCODE_BACK, null)
+                val keyEvent = android.view.KeyEvent(android.view.KeyEvent.ACTION_DOWN, android.view.KeyEvent.KEYCODE_BACK)
+                val result = activity.onKeyDown(android.view.KeyEvent.KEYCODE_BACK, keyEvent)
                 assert(result == true)
             }
         }
